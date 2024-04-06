@@ -2,6 +2,7 @@ package com.example.userservice.service.Impl;
 
 import com.example.userservice.dto.UserRequest;
 import com.example.userservice.dto.UserResponse;
+import com.example.userservice.exception.UserException;
 import com.example.userservice.mapper.Impl.UserMapperImpl;
 import com.example.userservice.model.User;
 import com.example.userservice.repository.UserRepo;
@@ -24,7 +25,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getById(Long id) {
         User user = userRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("Пользователь с ID " + id + " не найден"));
+                () -> new UserException("Пользователь с ID " + id + " не найден"));
         return mapper.toUserResponse(user);
     }
 
@@ -36,7 +37,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse save(UserRequest userRequest) {
         if (userRepository.findByEmail(userRequest.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Пользователь с email " + userRequest.getEmail() + " уже существует");
+            throw new UserException("Пользователь с email " + userRequest.getEmail() + " уже существует");
         }
         return mapper.toUserResponse(userRepository.save(mapper.toUser(userRequest)));
     }
@@ -44,7 +45,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse update(Long id, UserRequest userRequest) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Пользователь с ID " + id + " не найден"));
+                .orElseThrow(() -> new UserException("Пользователь с ID " + id + " не найден"));
 
         user.setName(userRequest.getName());
         user.setSecondName(userRequest.getSecondName());
@@ -58,7 +59,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Пользователь с ID " + id + " не найден"));
+                .orElseThrow(() -> new UserException("Пользователь с ID " + id + " не найден"));
         userRepository.delete(user);
     }
 }
