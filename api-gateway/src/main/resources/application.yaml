@@ -1,0 +1,20 @@
+server:
+  port: 8765
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+  main:
+    web-application-type: reactive
+jwt:
+  secret: MiAVzqUXy5Tfr1kVIGpPMiAVzqUXy5Tfr1kVIGpP
+
+#spring.cloud.gateway.routes[0].id=users
+#spring.cloud.gateway.routes[0].uri=lb://user
+#spring.cloud.gateway.routes[0].predicates[0]=Path=/api/users
