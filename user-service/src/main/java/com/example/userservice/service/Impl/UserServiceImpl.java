@@ -2,6 +2,7 @@ package com.example.userservice.service.Impl;
 
 import com.example.userservice.dto.UserRequest;
 import com.example.userservice.dto.UserResponse;
+import com.example.userservice.enums.Role;
 import com.example.userservice.exception.UserException;
 import com.example.userservice.mapper.Impl.UserMapperImpl;
 import com.example.userservice.model.User;
@@ -30,6 +31,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponse getByEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new UserException("Пользователь с email " + email + " не найден"));
+
+        return mapper.toUserResponse(user);
+    }
+
+    @Override
     public List<UserResponse> getAll() {
         return userRepository.findAll().stream().map(mapper::toUserResponse).collect(Collectors.toList());
     }
@@ -39,6 +48,7 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByEmail(userRequest.getEmail()).isPresent()) {
             throw new UserException("Пользователь с email " + userRequest.getEmail() + " уже существует");
         }
+        userRequest.setRole(Role.USER);
         return mapper.toUserResponse(userRepository.save(mapper.toUser(userRequest)));
     }
 
@@ -49,8 +59,6 @@ public class UserServiceImpl implements UserService {
 
         user.setName(userRequest.getName());
         user.setSecondName(userRequest.getSecondName());
-        user.setEmail(userRequest.getEmail());
-        user.setPassword(userRequest.getPassword());
         user.setRole(userRequest.getRole());
 
         return mapper.toUserResponse(userRepository.save(user));

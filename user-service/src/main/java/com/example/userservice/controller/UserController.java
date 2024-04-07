@@ -25,6 +25,10 @@ public class UserController {
     public UserResponse getUserById(@PathVariable Long id) {
         return userService.getById(id);
     }
+    @PostMapping("/users/login")
+    public UserResponse login(@RequestBody UserRequest user) {
+        return userService.getByEmail(user.getEmail());
+    }
 
     @PostMapping("/users")
     public UserResponse createUser(@RequestBody UserRequest user) {

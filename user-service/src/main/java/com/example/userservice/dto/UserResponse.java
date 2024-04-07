@@ -1,5 +1,6 @@
 package com.example.userservice.dto;
 
+import com.example.userservice.enums.Role;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,7 +10,7 @@ public class UserResponse {
     private Long id;
     private String name;
     private String secondName;
-//    private String email;
-//    private String password;
-//    private Role role;
+    private String email;
+    private String password;
+    private Role role;
 }

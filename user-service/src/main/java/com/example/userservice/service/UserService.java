@@ -8,6 +8,8 @@ import java.util.List;
 public interface UserService {
     UserResponse getById(Long id);
 
+    UserResponse getByEmail(String email);
+
     List<UserResponse> getAll();
 
     UserResponse save(UserRequest userRequest);
@@ -15,5 +17,4 @@ public interface UserService {
     UserResponse update(Long id, UserRequest userRequest);
 
     void deleteById(Long id);
-
 }

@@ -7,7 +7,8 @@ import com.example.userservice.model.User;
 
 public class UserMapperImpl implements UserMapper {
     public UserResponse toUserResponse(User user) {
-        return UserResponse.builder().id(user.getId()).name(user.getName()).secondName(user.getSecondName()).build();
+        return UserResponse.builder().id(user.getId()).name(user.getName()).secondName(user.getSecondName()).email(user.getEmail())
+                .password(user.getPassword()).role(user.getRole()).build();
     }
 
     public User toUser(UserRequest userRequest) {
