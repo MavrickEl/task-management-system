@@ -1,7 +1,7 @@
 package com.example.userservice.service.Impl;
 
-import com.example.userservice.dto.UserRequest;
-import com.example.userservice.dto.UserResponse;
+import com.example.userservice.dto.request.UserRequestDto;
+import com.example.userservice.dto.response.UserResponseDto;
 import com.example.userservice.enums.Role;
 import com.example.userservice.exception.UserException;
 import com.example.userservice.mapper.Impl.UserMapperImpl;
@@ -24,14 +24,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse getById(Long id) {
+    public UserResponseDto getById(Long id) {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new UserException("Пользователь с ID " + id + " не найден"));
         return mapper.toUserResponse(user);
     }
 
     @Override
-    public UserResponse getByEmail(String email) {
+    public UserResponseDto getByEmail(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new UserException("Пользователь с email " + email + " не найден"));
 
@@ -39,27 +39,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponse> getAll() {
+    public List<UserResponseDto> getAll() {
         return userRepository.findAll().stream().map(mapper::toUserResponse).collect(Collectors.toList());
     }
 
     @Override
-    public UserResponse save(UserRequest userRequest) {
-        if (userRepository.findByEmail(userRequest.getEmail()).isPresent()) {
-            throw new UserException("Пользователь с email " + userRequest.getEmail() + " уже существует");
+    public UserResponseDto save(UserRequestDto userRequest) {
+        if (userRepository.findByEmail(userRequest.email()).isPresent()) {
+            throw new UserException("Пользователь с email " + userRequest.email() + " уже существует");
         }
-        userRequest.setRole(Role.USER);
         return mapper.toUserResponse(userRepository.save(mapper.toUser(userRequest)));
     }
 
     @Override
-    public UserResponse update(Long id, UserRequest userRequest) {
+    public UserResponseDto update(Long id, UserRequestDto userRequest) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserException("Пользователь с ID " + id + " не найден"));
 
-        user.setName(userRequest.getName());
-        user.setSecondName(userRequest.getSecondName());
-        user.setRole(userRequest.getRole());
+        user.setName(userRequest.name());
+        user.setSecondName(userRequest.secondName());
+        user.setRole(userRequest.role());
 
         return mapper.toUserResponse(userRepository.save(user));
     }

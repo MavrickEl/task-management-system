@@ -1,20 +1,20 @@
 package com.example.userservice.service;
 
-import com.example.userservice.dto.UserRequest;
-import com.example.userservice.dto.UserResponse;
+import com.example.userservice.dto.request.UserRequestDto;
+import com.example.userservice.dto.response.UserResponseDto;
 
 import java.util.List;
 
 public interface UserService {
-    UserResponse getById(Long id);
+    UserResponseDto getById(Long id);
 
-    UserResponse getByEmail(String email);
+    UserResponseDto getByEmail(String email);
 
-    List<UserResponse> getAll();
+    List<UserResponseDto> getAll();
 
-    UserResponse save(UserRequest userRequest);
+    UserResponseDto save(UserRequestDto userRequest);
 
-    UserResponse update(Long id, UserRequest userRequest);
+    UserResponseDto update(Long id, UserRequestDto userRequest);
 
     void deleteById(Long id);
 }
