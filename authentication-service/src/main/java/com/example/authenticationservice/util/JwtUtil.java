@@ -1,5 +1,6 @@
-package com.example.authenticationservice.service;
+package com.example.authenticationservice.util;
 
+import com.example.authenticationservice.model.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -24,8 +25,8 @@ public class JwtUtil {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String generate(String userId, String role, String tokenType) {
-        Map<String, String> claims = Map.of("id", userId, "role", role);
+    public String generate(User user, String tokenType) {
+        Map<String, String> claims = Map.of("id", user.getId(), "email", user.getEmail());
         long expMillis = "ACCESS".equalsIgnoreCase(tokenType)
                 ? Long.parseLong(expiration) * 1000
                 : Long.parseLong(expiration) * 1000 * 5;
@@ -35,7 +36,7 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(claims.get("id"))
+                .setIssuer("management-system")
                 .setIssuedAt(now)
                 .setExpiration(exp)
                 .signWith(key)
