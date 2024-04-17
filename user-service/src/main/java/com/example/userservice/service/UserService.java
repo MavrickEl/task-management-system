@@ -16,5 +16,7 @@ public interface UserService {
 
     UserResponseDto update(Long id, UserRequestDto userRequest);
 
+    UserResponseDto partialUpdate(Long id, UserRequestDto userRequest) throws IllegalAccessException;
+
     void deleteById(Long id);
 }
