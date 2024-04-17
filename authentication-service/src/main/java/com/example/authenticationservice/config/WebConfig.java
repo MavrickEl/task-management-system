@@ -11,13 +11,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class WebConfig {
     @Value("${user-service.base-url}")
-    private String baseUrl;
+    private String baseUserUrl;
 
     @Bean
     @LoadBalanced
     public WebClient webClient() {
         return WebClient.builder()
-                .baseUrl(baseUrl)
+                .baseUrl(baseUserUrl)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }

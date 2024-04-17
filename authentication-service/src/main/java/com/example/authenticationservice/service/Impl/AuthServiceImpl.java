@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
 public class AuthServiceImpl implements AuthService {
     private final WebClient webClient;
     private final JwtUtil jwtUtil;
-    private static final String GET_DETAIL_URI = "/api/users";
+    private static final String GET_DETAIL_URI = "/users/api/user";
 
     public AuthResponse register(AuthRequest request) {
         request.setPassword(PasswordUtil.hashPassword(request.getPassword()));
@@ -41,7 +41,7 @@ public class AuthServiceImpl implements AuthService {
     public AuthResponse signin(AuthRequest request) {
         User user = webClient
                 .post()
-                .uri("/api/users/login")
+                .uri(GET_DETAIL_URI + "/login")
                 .body(Mono.just(request), AuthRequest.class)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new UserException("POST", GET_DETAIL_URI, clientResponse.statusCode().toString())))
