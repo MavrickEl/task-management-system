@@ -1,12 +1,15 @@
 package com.example.userservice.service.Impl;
 
+import com.example.userservice.dto.request.UserFieldsRequestDto;
 import com.example.userservice.dto.request.UserRequestDto;
 import com.example.userservice.dto.response.UserResponseDto;
+import com.example.userservice.enums.Role;
 import com.example.userservice.exception.UserException;
 import com.example.userservice.mapper.Impl.UserMapperImpl;
 import com.example.userservice.model.User;
 import com.example.userservice.repository.UserRepo;
 import com.example.userservice.service.UserService;
+import com.example.userservice.util.PasswordUtil;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
@@ -25,7 +28,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto getById(Long id) {
-        User user = getUser(id);
+        User user = getUserById(id);
         return mapper.toUserResponse(user);
     }
 
@@ -44,38 +47,56 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto save(UserRequestDto userRequest) {
-        if (userRepository.findByEmail(userRequest.email()).isPresent()) {
-            throw new UserException("Пользователь с email " + userRequest.email() + " уже существует");
-        }
+        checkExistUserByEmail(userRequest.email());
         return mapper.toUserResponse(userRepository.save(mapper.toUser(userRequest)));
     }
 
     @Override
     public UserResponseDto update(Long id, UserRequestDto userRequest) {
-        User user = getUser(id);
-        user.setName(userRequest.name());
-        user.setSecondName(userRequest.secondName());
-        user.setRole(userRequest.role());
-        return mapper.toUserResponse(userRepository.save(user));
+        return userRepository.findById(id)
+                .map(user -> {
+                    user.setName(userRequest.name());
+                    user.setSecondName(userRequest.secondName());
+                    checkExistUserByEmail(userRequest.email());
+                    if (!userRequest.email().equals(user.getEmail())) {
+                        checkExistUserByEmail(userRequest.email());
+                    }
+                    user.setEmail(userRequest.email());
+                    user.setPassword(PasswordUtil.hashPassword(userRequest.password()));
+                    user.setRole(Role.valueOf(userRequest.role()));
+                    return mapper.toUserResponse(userRepository.save(user));
+                })
+                .orElseGet(() -> {
+                    checkExistUserByEmail(userRequest.email());
+                    User user = mapper.toUser(userRequest);
+                    user.setPassword(PasswordUtil.hashPassword(userRequest.password()));
+                    return mapper.toUserResponse(userRepository.save(user));
+                });
     }
 
     @Override
-    public UserResponseDto partialUpdate(Long id, UserRequestDto userRequest) throws IllegalAccessException {
-        User user = getUser(id);
+    public UserResponseDto updateFields(Long id, UserFieldsRequestDto userRequest) throws IllegalAccessException {
+        User user = getUserById(id);
         updateUser(user, mapper.toUser(userRequest));
         return mapper.toUserResponse(userRepository.save(user));
     }
 
     @Override
     public void deleteById(Long id) {
-        User user = getUser(id);
+        User user = getUserById(id);
         userRepository.delete(user);
     }
 
 
-    private User getUser(Long id) {
+    private User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserException("Пользователь с ID " + id + " не найден"));
+    }
+
+    private void checkExistUserByEmail(String email) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new UserException("Пользователь с email " + email + " уже существует");
+        }
     }
 
     private void updateUser(User existingUser, User requestUser) throws IllegalAccessException {

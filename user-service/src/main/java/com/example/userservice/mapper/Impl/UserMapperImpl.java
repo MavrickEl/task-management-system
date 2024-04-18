@@ -1,7 +1,9 @@
 package com.example.userservice.mapper.Impl;
 
+import com.example.userservice.dto.request.UserFieldsRequestDto;
 import com.example.userservice.dto.request.UserRequestDto;
 import com.example.userservice.dto.response.UserResponseDto;
+import com.example.userservice.enums.Role;
 import com.example.userservice.mapper.UserMapper;
 import com.example.userservice.model.User;
 
@@ -12,6 +14,10 @@ public class UserMapperImpl implements UserMapper {
 
     public User toUser(UserRequestDto userRequest) {
         return User.builder().name(userRequest.name()).secondName(userRequest.secondName())
-                .email(userRequest.email()).password(userRequest.password()).role(userRequest.role()).build();
+                .email(userRequest.email()).password(userRequest.password()).role(Role.valueOf(userRequest.role())).build();
+    }
+
+    public User toUser(UserFieldsRequestDto userRequest) {
+        return User.builder().name(userRequest.name()).secondName(userRequest.secondName()).role(Role.valueOf(userRequest.role())).build();
     }
 }

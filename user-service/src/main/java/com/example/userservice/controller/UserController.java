@@ -1,10 +1,14 @@
 package com.example.userservice.controller;
 
+import com.example.userservice.dto.request.UserFieldsRequestDto;
 import com.example.userservice.dto.request.UserRequestDto;
 import com.example.userservice.dto.response.UserResponseDto;
 import com.example.userservice.service.UserService;
+import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @RestController
@@ -40,18 +45,30 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<UserResponseDto> createUser(@RequestBody UserRequestDto user) {
+    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String message = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationException(message);
+        }
         return ResponseEntity.ok(userService.save(user));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @RequestBody UserRequestDto user) {
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequestDto user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String message = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationException(message);
+        }
         return ResponseEntity.ok(userService.update(id, user));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<UserResponseDto> updateUserFields(@PathVariable Long id, @RequestBody UserRequestDto user) throws IllegalAccessException {
-        return ResponseEntity.ok(userService.partialUpdate(id, user));
+    public ResponseEntity<UserResponseDto> updateUserFields(@PathVariable Long id, @Valid @RequestBody UserFieldsRequestDto user, BindingResult bindingResult) throws IllegalAccessException {
+        if (bindingResult.hasErrors()) {
+            String message = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationException(message);
+        }
+        return ResponseEntity.ok(userService.updateFields(id, user));
     }
 
     @DeleteMapping("/{id}")
