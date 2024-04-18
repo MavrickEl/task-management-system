@@ -9,5 +9,3 @@ spring:
     username: postgres
     password: 7777
     driver-class-name: org.postgresql.Driver
-jwt:
-  secret: MiAVzqUXy5Tfr1kVIGpPMiAVzqUXy5Tfr1kVIGpP
