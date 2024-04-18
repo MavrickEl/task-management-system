@@ -1,4 +1,4 @@
-package com.example.authenticationservice.dto;
+package com.example.authenticationservice.dto.response;
 
 public record ErrorResponseDto(
         String errorMessage

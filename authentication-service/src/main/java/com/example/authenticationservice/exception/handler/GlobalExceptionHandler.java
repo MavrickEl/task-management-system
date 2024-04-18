@@ -1,14 +1,21 @@
 package com.example.authenticationservice.exception.handler;
 
-import com.example.authenticationservice.dto.ErrorResponseDto;
+import com.example.authenticationservice.dto.response.ErrorResponseDto;
+import com.example.authenticationservice.exception.AuthenticationException;
 import com.example.authenticationservice.exception.UserException;
-import org.apache.tomcat.websocket.AuthenticationException;
+import jakarta.validation.ValidationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+    @ExceptionHandler(value = ValidationException.class)
+    public ResponseEntity<ErrorResponseDto> wrongValidation(Exception ex) {
+        String errorMessage = String.format("Wrong validation: %s", ex.getMessage());
+        return ResponseEntity.status(400).body(new ErrorResponseDto(errorMessage));
+    }
 
     @ExceptionHandler(value = {
             AuthenticationException.class,

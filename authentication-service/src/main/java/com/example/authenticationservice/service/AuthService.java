@@ -1,9 +1,10 @@
 package com.example.authenticationservice.service;
 
-import com.example.authenticationservice.model.AuthRequest;
-import com.example.authenticationservice.model.AuthResponse;
+import com.example.authenticationservice.dto.request.AuthenticationRequestDto;
+import com.example.authenticationservice.dto.request.UserRequestDto;
+import com.example.authenticationservice.dto.response.AuthResponseDto;
 
 public interface AuthService {
-    AuthResponse register(AuthRequest request);
-    AuthResponse signin(AuthRequest request);
+    AuthResponseDto register(UserRequestDto request);
+    AuthResponseDto signin(AuthenticationRequestDto request);
 }

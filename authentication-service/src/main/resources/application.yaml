@@ -9,5 +9,5 @@ user-service:
   base-url: http://localhost:8081
 
 jwt:
-  secret: MiAVzqUXy5Tfr1kVIGpPMiAVzqUXy5Tfr1kVIGpP
+  secret: ENk2InMhEpe50LtIdvnjbjE0Ia0virEr9wCJJ6UAms
   expiration: 86400
