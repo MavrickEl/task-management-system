@@ -1,37 +1,32 @@
 package com.example.apigateway.service;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.stereotype.Component;
 
-import java.security.Key;
-import java.util.Date;
-
-@Service
+@RequiredArgsConstructor
+@Component
 public class JwtUtil {
-    @Value("${jwt.secret}")
-    private String secret;
+    private final JWTVerifier verifier;
+    private static final String EMPTY_TOKEN = "Empty jwt token";
 
-    private Key key;
-
-    @PostConstruct
-    public void initKey() {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+    public void validateTokenFromHeaders(HttpHeaders headers) {
+        String token = getAuthorizationToken(headers);
+        verifyToken(token);
     }
 
-    public Claims getClaims(String token) {
-        token = token.replace("Bearer ", "");
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    public void verifyToken(String bearerToken) {
+        String token = bearerToken.replace("Bearer ", "");
+        verifier.verify(token);
     }
 
-    public boolean isExpired(String token) {
-        return getExpirationDate(token).before(new Date());
-    }
-
-    public Date getExpirationDate(String token) {
-        return getClaims(token).getExpiration();
+    public String getAuthorizationToken(HttpHeaders headers) {
+        String token = headers.getFirst(HttpHeaders.AUTHORIZATION);
+        if (token == null) {
+            throw new JWTVerificationException(EMPTY_TOKEN);
+        }
+        return token;
     }
 }

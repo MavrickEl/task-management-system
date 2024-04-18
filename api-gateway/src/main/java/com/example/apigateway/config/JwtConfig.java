@@ -1,4 +1,4 @@
-package com.example.userservice.config;
+package com.example.apigateway.config;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class Config {
+public class JwtConfig {
     @Value("${jwt.secret}")
     private String secret;
 
