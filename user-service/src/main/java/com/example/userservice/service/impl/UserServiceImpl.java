@@ -5,8 +5,8 @@ import com.example.userservice.dto.request.UserRequestDto;
 import com.example.userservice.dto.response.UserResponseDto;
 import com.example.userservice.enums.Role;
 import com.example.userservice.exception.UserException;
-import com.example.userservice.mapper.impl.UserMapperImpl;
 import com.example.userservice.mapper.UserMapper;
+import com.example.userservice.mapper.impl.UserMapperImpl;
 import com.example.userservice.model.User;
 import com.example.userservice.repository.UserRepo;
 import com.example.userservice.service.UserService;
@@ -57,7 +57,6 @@ public class UserServiceImpl implements UserService {
                 .map(user -> {
                     user.setName(userRequest.name());
                     user.setSecondName(userRequest.secondName());
-                    checkExistUserByEmail(userRequest.email());
                     if (!userRequest.email().equals(user.getEmail())) {
                         checkExistUserByEmail(userRequest.email());
                     }
