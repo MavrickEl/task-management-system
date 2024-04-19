@@ -6,6 +6,7 @@ import com.example.userservice.dto.response.UserResponseDto;
 import com.example.userservice.enums.Role;
 import com.example.userservice.exception.UserException;
 import com.example.userservice.mapper.Impl.UserMapperImpl;
+import com.example.userservice.mapper.UserMapper;
 import com.example.userservice.model.User;
 import com.example.userservice.repository.UserRepo;
 import com.example.userservice.service.UserService;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private final UserMapperImpl mapper;
+    private final UserMapper mapper;
     private final UserRepo userRepository;
 
     public UserServiceImpl(UserRepo userRepository) {
@@ -36,7 +37,6 @@ public class UserServiceImpl implements UserService {
     public UserResponseDto getByEmail(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new UserException("Пользователь с email " + email + " не найден"));
-
         return mapper.toUserResponse(user);
     }
 
