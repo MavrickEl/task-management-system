@@ -7,6 +7,7 @@ import com.example.userservice.provider.UserProvider;
 import com.example.userservice.provider.UserRequestDtoProvider;
 import com.example.userservice.provider.UserResponseDtoProvider;
 import com.example.userservice.repository.UserRepo;
+import com.example.userservice.service.impl.UserServiceImpl;
 import com.example.userservice.util.PasswordUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

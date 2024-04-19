@@ -1,4 +1,4 @@
-package com.example.userservice.mapper.Impl;
+package com.example.userservice.mapper.impl;
 
 import com.example.userservice.dto.request.UserFieldsRequestDto;
 import com.example.userservice.dto.request.UserRequestDto;

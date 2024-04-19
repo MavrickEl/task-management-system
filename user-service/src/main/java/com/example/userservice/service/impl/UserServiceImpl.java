@@ -1,11 +1,11 @@
-package com.example.userservice.service.Impl;
+package com.example.userservice.service.impl;
 
 import com.example.userservice.dto.request.UserFieldsRequestDto;
 import com.example.userservice.dto.request.UserRequestDto;
 import com.example.userservice.dto.response.UserResponseDto;
 import com.example.userservice.enums.Role;
 import com.example.userservice.exception.UserException;
-import com.example.userservice.mapper.Impl.UserMapperImpl;
+import com.example.userservice.mapper.impl.UserMapperImpl;
 import com.example.userservice.mapper.UserMapper;
 import com.example.userservice.model.User;
 import com.example.userservice.repository.UserRepo;
