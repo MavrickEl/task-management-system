@@ -1,4 +1,4 @@
-package com.example.authenticationservice.service.Impl;
+package com.example.authenticationservice.service.impl;
 
 import com.example.authenticationservice.dto.request.AuthenticationRequestDto;
 import com.example.authenticationservice.dto.request.UserRequestDto;

@@ -26,7 +26,10 @@ public class JwtUtil {
     }
 
     public String generate(User user, String tokenType) {
-        Map<String, String> claims = Map.of("id", user.getId(), "email", user.getEmail());
+        Map<String, String> claims = Map.of("id", user.getId(),
+                "email", user.getEmail(),
+                "name", user.getName(),
+                "secondName", user.getSecondName());
         long expMillis = "ACCESS".equalsIgnoreCase(tokenType)
                 ? Long.parseLong(expiration) * 1000
                 : Long.parseLong(expiration) * 1000 * 5;
