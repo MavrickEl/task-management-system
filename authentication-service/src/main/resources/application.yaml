@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8085
 
 spring:
   application:
@@ -10,4 +10,7 @@ user-service:
 
 jwt:
   secret: ENk2InMhEpe50LtIdvnjbjE0Ia0virEr9wCJJ6UAms
-  expiration: 86400
+  issuer: "management-system"
+  expiration: 864000
+  refresh-token:
+    expiration: 604800000

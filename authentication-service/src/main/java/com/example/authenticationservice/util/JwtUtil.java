@@ -1,6 +1,7 @@
 package com.example.authenticationservice.util;
 
 import com.example.authenticationservice.model.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -9,14 +10,19 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
 public class JwtUtil {
     @Value("${jwt.secret}")
     private String secret;
+    @Value("${jwt.issuer}")
+    private String issuer;
     @Value("${jwt.expiration}")
-    private String expiration;
+    private Long expiration;
+    @Value("${jwt.refresh-token.expiration}")
+    private Long refreshExpiration;
 
     private Key key;
 
@@ -25,24 +31,37 @@ public class JwtUtil {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String generate(User user, String tokenType) {
-        Map<String, String> claims = Map.of("id", user.getId(),
+    public String generateAccess(User user) {
+        Map<String, String> claims = Map.of(
                 "email", user.getEmail(),
                 "name", user.getName(),
                 "secondName", user.getSecondName());
-        long expMillis = "ACCESS".equalsIgnoreCase(tokenType)
-                ? Long.parseLong(expiration) * 1000
-                : Long.parseLong(expiration) * 1000 * 5;
+        return buildToken(claims, user, expiration);
+    }
 
-        final Date now = new Date();
-        final Date exp = new Date(now.getTime() + expMillis);
+    public String generateRefresh(User user) {
+        return buildToken(new HashMap<>(), user, refreshExpiration);
+    }
 
-        return Jwts.builder()
+    private String buildToken(Map<String, String> claims, User user, long expiration) {
+        return Jwts
+                .builder()
                 .setClaims(claims)
-                .setIssuer("management-system")
-                .setIssuedAt(now)
-                .setExpiration(exp)
+                .setSubject(user.getId())
+                .setIssuer(issuer)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key)
                 .compact();
+    }
+
+    public String extractId(String token) {
+        Claims claims = (Claims) Jwts.parserBuilder()
+                .setSigningKey(secret.getBytes())
+                .build()
+                .parse(token)
+                .getBody();
+
+        return claims.getSubject();
     }
 }
