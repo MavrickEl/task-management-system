@@ -1,12 +1,12 @@
 server:
-  port: 8765
+  port: 8080
 services:
   url:
-    auth-service: ${AUTH_SERVICE_URL:http://localhost:8080}
     user-service: ${USER_SERVICE_URL:http://localhost:8081}
     task-service: ${TASK_SERVICE_URL:http://localhost:8082}
-    comment-service: ${TASK_SERVICE_URL:http://localhost:8083}
-    notification-service: ${TASK_SERVICE_URL:http://localhost:8084}
+    comment-service: ${COMMENT_SERVICE_URL:http://localhost:8083}
+    notification-service: ${NOTIFICATION_SERVICE_URL:http://localhost:8084}
+    auth-service: ${AUTH_SERVICE_URL:http://localhost:8085}
 spring:
   application:
     name: api-gateway
