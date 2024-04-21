@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(value = ValidationException.class)
+    @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorResponseDto> wrongValidation(Exception ex) {
         String errorMessage = String.format("Wrong validation: %s", ex.getMessage());
         return ResponseEntity.status(400).body(new ErrorResponseDto(errorMessage));
@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(new ErrorResponseDto(e.getMessage()));
     }
 
-    @ExceptionHandler(value = Exception.class)
+    @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponseDto> handleInternalServerError(Exception ex) {
         String errorMessage = String.format("Server error: %s", ex.getMessage());
         return ResponseEntity.internalServerError().body(new ErrorResponseDto(errorMessage));
