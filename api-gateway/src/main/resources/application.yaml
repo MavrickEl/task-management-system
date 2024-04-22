@@ -2,11 +2,11 @@ server:
   port: 8080
 services:
   url:
-    user-service: ${USER_SERVICE_URL:http://localhost:8081}
-    task-service: ${TASK_SERVICE_URL:http://localhost:8082}
-    comment-service: ${COMMENT_SERVICE_URL:http://localhost:8083}
-    notification-service: ${NOTIFICATION_SERVICE_URL:http://localhost:8084}
-    auth-service: ${AUTH_SERVICE_URL:http://localhost:8085}
+    user-service: ${USER_SERVICE_URL:http://user-service:8081}
+    task-service: ${TASK_SERVICE_URL:http://task-service:8082}
+    comment-service: ${COMMENT_SERVICE_URL:http://comment-service:8083}
+    notification-service: ${NOTIFICATION_SERVICE_URL:http://notification-service:8084}
+    auth-service: ${AUTH_SERVICE_URL:http://authentication-service:8085}
 spring:
   application:
     name: api-gateway
