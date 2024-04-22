@@ -1,0 +1,174 @@
+version: "3.9"
+
+networks:
+  app:
+    driver: bridge
+volumes:
+  db-data:
+    driver: local
+  kafka-data:
+    driver: local
+  zookeeper-data:
+    driver: local
+
+services:
+  user_db:
+    image: postgres:latest
+    container_name: user_service_db
+    environment:
+      POSTGRES_DB: user_db
+      POSTGRES_USER: developer
+      POSTGRES_PASSWORD: pass
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5433:5432"
+  comment_db:
+    image: postgres:latest
+    container_name: comment_service_db
+    environment:
+      POSTGRES_DB: comment_db
+      POSTGRES_USER: developer
+      POSTGRES_PASSWORD: pass
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5434:5432"
+  notification_db:
+    image: postgres:latest
+    container_name: notification_service_db
+    environment:
+      POSTGRES_DB: notification_db
+      POSTGRES_USER: developer
+      POSTGRES_PASSWORD: pass
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5435:5432"
+  task_db:
+    image: postgres:latest
+    container_name: task_service_db
+    environment:
+      POSTGRES_DB: task_db
+      POSTGRES_USER: developer
+      POSTGRES_PASSWORD: pass
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5436:5432"
+
+  user-service:
+    build: ./user-service
+    container_name: user_service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - user_db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://user_db:5432/user_db
+      SPRING_DATASOURCE_USERNAME: developer
+      SPRING_DATASOURCE_PASSWORD: pass
+
+  comment-service:
+    build: ./Comment_Service
+    container_name: comment_service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - comment_db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://comment_db:5432/comment_db
+      SPRING_DATASOURCE_USERNAME: developer
+      SPRING_DATASOURCE_PASSWORD: pass
+
+  notification-service:
+    build: ./Notification_Service
+    container_name: notification_service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - notification_db
+      - kafka
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://notification_db:5432/notification_db
+      SPRING_DATASOURCE_USERNAME: developer
+      SPRING_DATASOURCE_PASSWORD: pass
+      SPRING_MAIL_HOST: smtp.gmail.com
+      SPRING_MAIL_PORT: 587
+      SPRING_MAIL_USERNAME: stanislavi18061989@gmail.com
+      SPRING_MAIL_PASSWORD: vvhm kvzs hcam mvci
+      SPRING_KAFKA_TOPIC: task-create,comment-create
+      SPRING_KAFKA_SERVER_HOST: localhost
+      SPRING_KAFKA_SERVER_PORT: 9092
+      SERVER_PORT: 8084
+
+  gateway-service:
+    build: ./api-gateway
+    container_name: gateway_service
+    ports:
+      - "8080:8080"
+
+  authentication-service:
+    build: ./authentication-service
+    container_name: authentication_service
+    ports:
+      - "8085:8085"
+
+  eureka-server:
+    build: ./eureka-server
+    container_name: eureka_server
+    ports:
+      - "8761:8761"
+
+  config-server:
+    build: ./config-server
+    container_name: config_server
+    ports:
+      - "8888:8888"
+
+  #  zookeeper:
+  #    image: 'confluentinc/cp-zookeeper:latest'
+  #    container_name: zookeeper
+  #    networks:
+  #      - app
+  #    ports:
+  #      - '2181:2181'
+  #    volumes:
+  #      - zookeeper-data:/var/lib/zookeeper/data
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: 'confluentinc/cp-kafka:latest'
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    environment:
+      SPRING_KAFKA_TOPIC: task-create,comment-create
+      SPRING_KAFKA_SERVER_HOST: localhost
+      SPRING_KAFKA_SERVER_PORT: 9092
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    ports:
+      - '9092:9092'
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+#  task-service:
+#    build: ./task-service
+#    container_name: task_service
+#    ports:
+#      - "8082:8082"
+#    depends_on:
+#      - task_db
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://task_db:5432/task_db
+#      SPRING_DATASOURCE_USERNAME: developer
+#      SPRING_DATASOURCE_PASSWORD: pass
+
