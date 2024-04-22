@@ -60,6 +60,7 @@ services:
       - "8081:8081"
     depends_on:
       - user_db
+      - eureka-server
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://user_db:5432/user_db
       SPRING_DATASOURCE_USERNAME: developer
@@ -72,6 +73,7 @@ services:
       - "8083:8083"
     depends_on:
       - comment_db
+      - eureka-server
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://comment_db:5432/comment_db
       SPRING_DATASOURCE_USERNAME: developer
@@ -85,6 +87,7 @@ services:
     depends_on:
       - notification_db
       - kafka
+      - eureka-server
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://notification_db:5432/notification_db
       SPRING_DATASOURCE_USERNAME: developer
@@ -100,12 +103,16 @@ services:
 
   gateway-service:
     build: ./api-gateway
+    depends_on:
+      - eureka-server
     container_name: gateway_service
     ports:
       - "8080:8080"
 
   authentication-service:
     build: ./authentication-service
+    depends_on:
+      - eureka-server
     container_name: authentication_service
     ports:
       - "8085:8085"
@@ -118,6 +125,8 @@ services:
 
   config-server:
     build: ./config-server
+    depends_on:
+      - eureka-server
     container_name: config_server
     ports:
       - "8888:8888"
